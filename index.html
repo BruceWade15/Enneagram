@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enneagram Personality Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ee9696;
+            color: #fcfcfc;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        h1, h2 {
+            color: #3b65d8;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.8em;
+        }
+
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            background: rgba(59, 101, 216, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #3b65d8;
+        }
+
+        .question-container {
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .question-container:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .question {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #fcfcfc;
+        }
+
+        .options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59, 101, 216, 0.2);
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .option:hover {
+            background: rgba(59, 101, 216, 0.4);
+            transform: scale(1.05);
+        }
+
+        .option input[type="radio"] {
+            margin: 0;
+            transform: scale(1.2);
+        }
+
+        .option.selected {
+            background: #3b65d8;
+            border-color: #fcfcfc;
+            box-shadow: 0 4px 15px rgba(59, 101, 216, 0.4);
+        }
+
+        .submit-btn {
+            background: #3b65d8;
+            color: #fcfcfc;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            display: block;
+            margin: 40px auto 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(59, 101, 216, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: #2a4bc7;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 101, 216, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .result-type {
+            font-size: 2em;
+            color: #3b65d8;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-description {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #3b65d8;
+        }
+
+        .action-btn {
+            background: #3b65d8;
+            color: #fcfcfc;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.1em;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(59, 101, 216, 0.3);
+        }
+
+        .action-btn:hover {
+            background: #2a4bc7;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 101, 216, 0.4);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #3b65d8;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            background: rgba(255, 107, 107, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .options {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .option {
+                justify-content: center;
+                padding: 15px;
+            }
+
+            .question {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .description {
+                font-size: 1em;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="assessment">
+            <h1>Enneagram Personality Assessment</h1>
+            
+            <div class="description">
+                Discover your interconnected personality type through this comprehensive Enneagram assessment. Each type has its own core motivations, fears, and worldview that shape how you interact with the world.
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <form id="enneagramForm">
+                <div class="question-container">
+                    <div class="question">1. I often feel a strong need to improve things and make them "right".</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q1" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q1" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">2. I naturally focus on helping others and often put their needs before my own.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q2" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q2" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">3. Success and achievement are very important to me, and I work hard to maintain my image.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q3" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q3" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">4. I often feel different from others and long for what I don't have.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q4" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q4" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">5. I prefer to observe and understand before taking action, and I value my privacy.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q5" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q5" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">6. I tend to be anxious and seek security through loyalty to people or systems.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q6" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q6" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">7. I'm optimistic, spontaneous, and always looking for new experiences and possibilities.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q7" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q7" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">8. I'm assertive, direct, and comfortable taking charge in challenging situations.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q8" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q8" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">9. I prefer harmony and tend to avoid conflict, sometimes procrastinating on important decisions.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q9" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q9" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">10. I have high standards and get frustrated when things aren't done properly.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q10" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q10" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">11. I'm very attuned to others' emotions and needs, sometimes losing sight of my own.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q11" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q11" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">12. I'm highly competitive and driven to succeed, often working long hours.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q12" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q12" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">13. I experience emotions intensely and am drawn to beauty and authenticity.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q13" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q13" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">14. I need time alone to recharge and prefer depth over breadth in relationships.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q14" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q14" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">15. I question authority and tend to be either very loyal or very rebellious.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q15" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q15" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">16. I avoid pain and negative emotions by staying busy and positive.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q16" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q16" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">17. I believe in justice and am willing to fight for what I think is right.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q17" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q17" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">18. I tend to see multiple perspectives and have difficulty making decisions.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q18" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q18" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question">19. I often postpone dealing with problems, preferring to maintain peace and comfort.</div>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="q19" value="yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="q19" value="no">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="error-message" id="errorMessage">
+                    Please answer all questions before submitting.
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Get My Enneagram Type</button>
+            </form>
+        </div>
+
+        <div id="results" class="results">
+            <h2>Your Enneagram Type</h2>
+            <div class="result-type" id="resultType"></div>
+            <div class="result-description" id="resultDescription"></div>
+            <a href="https://outlook.office365.com/book/BookwithBruce@em-solutions.co.za/" class="action-btn" target="_blank">Book a Consultation with Bruce</a>
+        </div>
+    </div>
+
+    <script>
+        const enneagramTypes = {
+            1: {
+                name: "Type 1 - The Perfectionist",
+                description: "You are principled, purposeful, self-controlled, and perfectionistic. Your core motivation is to be good and right, to improve everything, and to avoid error and corruption. You fear being corrupt, defective, or wrong. Your basic desire is to be good, right, perfect, and to improve everything. You tend to be organized, orderly, and fastidious, trying to maintain high standards, but can also become critical and perfectionistic. You typically have problems with resentment and impatience."
+            },
+            2: {
+                name: "Type 2 - The Helper",
+                description: "You are interpersonal, demonstrative, people-pleasing, and possessive. Your core motivation is to feel loved and needed, to express your feelings for others, and to be close to others. You fear being unloved or unwanted for yourself alone. Your basic desire is to feel loved. You tend to be empathetic, sincere, and warm-hearted, but can also become sentimental, flattering, and people-pleasing. You typically have problems with possessiveness and with acknowledging your own needs."
+            },
+            3: {
+                name: "Type 3 - The Achiever",
+                description: "You are success-oriented, pragmatic, adaptive, excelling, driven, and image-conscious. Your core motivation is to feel valuable and worthwhile, to be affirmed, to distinguish yourself from others, and to have attention and admiration. You fear being worthless or having no value apart from your achievements. Your basic desire is to feel valuable and worthwhile. You tend to be self-assured, attractive, and charming, but can also become preoccupied with their image and what others think of them."
+            },
+            4: {
+                name: "Type 4 - The Individualist",
+                description: "You are expressive, dramatic, self-absorbed, and temperamental. Your core motivation is to find yourself and your significance, to create an identity from your inner experience, and to defend that identity. You fear having no identity or personal significance. Your basic desire is to find yourself and your significance. You tend to be intuitive, aesthetic, and self-aware, but can also become moody and self-conscious. You typically have problems with melancholy, self-indulgence, and self-pity."
+            },
+            5: {
+                name: "Type 5 - The Investigator",
+                description: "You are perceptive, innovative, secretive, and isolated. Your core motivation is to be capable and competent, to understand the environment, and to have everything figured out as a way of defending yourself from threats. You fear being useless, helpless, or incapable. Your basic desire is to be competent and understanding. You tend to be intense, cerebral, and perceptive, but can also become preoccupied with their thoughts and imaginary constructs. You typically have problems with eccentricity, nihilism, and isolation."
+            },
+            6: {
+                name: "Type 6 - The Loyalist",
+                description: "You are engaging, responsible, anxious, and suspicious. Your core motivation is to have security and support, to have guidance, and to test the attitudes of others toward them. You fear being without support or guidance. Your basic desire is to have security and support. You tend to be reliable, hard-working, and trustworthy, but can also become defensive, evasive, and highly anxious. You typically have problems with self-doubt and suspicion."
+            },
+            7: {
+                name: "Type 7 - The Enthusiast",
+                description: "You are spontaneous, versatile, acquisitive, and scattered. Your core motivation is to maintain happiness and enthusiasm, to satisfy their needs, to avoid pain and deprivation, and to keep themselves excited and occupied. You fear being trapped in pain or deprivation. Your basic desire is to maintain happiness and contentment. You tend to be extroverted, optimistic, and enthusiastic, but can also become over-extended, scattered, and undisciplined."
+            },
+            8: {
+                name: "Type 8 - The Challenger",
+                description: "You are self-confident, decisive, willful, and confrontational. Your core motivation is to be self-reliant and in control of your own life and destiny, to resist weakness, and to stay in charge of your situation. You fear being controlled or vulnerable to others. Your basic desire is to be self-reliant and in control of your own life and destiny. You tend to be direct, assertive, and strong, but can also become egocentric and domineering."
+            },
+            9: {
+                name: "Type 9 - The Peacemaker",
+                description: "You are accepting, trusting, and stable, but can also be complacent and minimizing. Your core motivation is to create harmony in your environment, to avoid conflicts and tension, to preserve things as they are, and to resist whatever would upset or disturb you. You fear loss of connection and fragmentation of yourself. Your basic desire is to have inner and outer peace. You tend to be agreeable, reassuring, and supportive, but can also be too willing to go along with others to keep the peace."
+            }
+        };
+
+        // Track progress
+        function updateProgress() {
+            const totalQuestions = 19;
+            const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+            const progress = (answeredQuestions / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        // Handle option selection
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // Remove selected class from all options in this question
+                const questionContainer = this.closest('.question-container');
+                questionContainer.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                updateProgress();
+            });
+        });
+
+        // Form submission
+        document.getElementById('enneagramForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const answers = {};
+            
+            // Check if all questions are answered
+            let allAnswered = true;
+            for (let i = 1; i <= 19; i++) {
+                const answer = formData.get(`q${i}`);
+                if (!answer) {
+                    allAnswered = false;
+                    break;
+                }
+                answers[`q${i}`] = answer;
+            }
+            
+            if (!allAnswered) {
+                document.getElementById('errorMessage').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Calculate Enneagram type based on answers
+            const typeScores = {
+                1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0
+            };
+            
+            // Scoring logic based on question mapping to types
+            const questionTypeMapping = {
+                q1: [1], q10: [1],
+                q2: [2], q11: [2],
+                q3: [3], q12: [3],
+                q4: [4], q13: [4],
+                q5: [5], q14: [5],
+                q6: [6], q15: [6],
+                q7: [7], q16: [7],
+                q8: [8], q17: [8],
+                q9: [9], q18: [9], q19: [9]
+            };
+            
+            // Calculate scores
+            Object.keys(answers).forEach(question => {
+                if (answers[question] === 'yes' && questionTypeMapping[question]) {
+                    questionTypeMapping[question].forEach(type => {
+                        typeScores[type]++;
+                    });
+                }
+            });
+            
+            // Find the type with highest score
+            let maxScore = -1;
+            let resultType = 1;
+            
+            Object.keys(typeScores).forEach(type => {
+                if (typeScores[type] > maxScore) {
+                    maxScore = typeScores[type];
+                    resultType = parseInt(type);
+                }
+            });
+            
+            // If tie, use additional logic or default to first tied type
+            if (maxScore === 0) {
+                resultType = 9; // Default to Type 9 if no clear match
+            }
+            
+            // Display results
+            document.getElementById('resultType').textContent = enneagramTypes[resultType].name;
+            document.getElementById('resultDescription').textContent = enneagramTypes[resultType].description;
+            
+            // Hide assessment and show results
+            document.getElementById('assessment').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        });
+
+        // Initialize progress
+        updateProgress();
+    </script>
+</body>
+</html>
